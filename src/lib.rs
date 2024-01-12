@@ -4,7 +4,6 @@ mod field;
 mod graph;
 mod default_paths;
 
-#[cfg(feature = "runtime-compile")]
 pub mod compile;
 
 #[cfg(feature = "build-witness")]

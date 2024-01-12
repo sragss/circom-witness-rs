@@ -1,14 +1,12 @@
 #!/bin/sh
 
-# Check for input file and optional output path
-if [ "$#" -lt 1 ]; then
-    echo "Usage: $0 <filename> [output_path]"
+# Check for input file
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 <filename>"
     exit 1
 fi
 
-cpp_path=$1
-filename=$(basename "$cpp_path" .cpp)
-output_path=${2:-"src/circuit.cc"}
+filename=$(basename "$1" .cpp)
 
 # Add header
 cat <<EOT > "$filename.new"
@@ -63,6 +61,6 @@ sed -e 's/FrElement\* signalValues/rust::Vec<FrElement> \&signalValues/g' \
 
 sed -E -e 's/"([^"]+)"\+ctx->generate_position_array\(([^)]+)\)/generate_position_array("\1", \2)/g' \
     -e 's/subcomponents = new uint\[([0-9]+)\]\{0\};/subcomponents = create_vec_u32(\1);/g' \
-    -e 's/^uint aux_dimensions\[([0-9]+)\] = \{([^}]+)\};$/rust::Vec<uint> aux_dimensions = rust::Vec<uint32_t>{\2};/' "$filename.new" > "$output_path"
+    -e 's/^uint aux_dimensions\[([0-9]+)\] = \{([^}]+)\};$/rust::Vec<uint> aux_dimensions = rust::Vec<uint32_t>{\2};/' "$filename.new" > "src/circuit.cc"
 
-cp "$(dirname $cpp_path)/$filename.dat" src/constants.dat
+cp "$(echo $filename)_cpp/$filename.dat" src/constants.dat
