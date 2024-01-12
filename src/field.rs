@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use crate::graph::{Node, Operation};
 use ruint::{aliases::U256, uint};
 use std::{ptr, sync::Mutex};

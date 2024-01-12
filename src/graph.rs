@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use std::{collections::HashMap, ops::Shl};
 
 use crate::field::M;
