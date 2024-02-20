@@ -132,6 +132,29 @@ pub fn evaluate(nodes: &[Node], inputs: &[U256], outputs: &[usize]) -> Vec<U256>
     out
 }
 
+pub fn evaluate_fr(nodes: &[Node], inputs: &[Fr], outputs: &[usize]) -> Vec<Fr> {
+    // assert_valid(nodes);
+
+    // Evaluate the graph.
+    let mut values = Vec::with_capacity(nodes.len());
+    for (_, &node) in nodes.iter().enumerate() {
+        let value = match node {
+            Node::Constant(c) => Fr::new(c.into()),
+            Node::MontConstant(c) => c,
+            Node::Input(i) => inputs[i],
+            Node::Op(op, a, b) => op.eval_fr(values[a], values[b]),
+        };
+        values.push(value);
+    }
+
+    let zero = Fr::from(0);
+    let mut out = vec![zero; outputs.len()];
+    for i in 0..outputs.len() {
+        out[i] = values[outputs[i]];
+    }
+    out
+}
+
 /// Constant propagation
 pub fn propagate(nodes: &mut [Node]) {
     assert_valid(nodes);
