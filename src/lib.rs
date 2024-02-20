@@ -6,6 +6,7 @@ pub mod generate;
 
 use std::collections::HashMap;
 
+use ark_bn254::Fr;
 use ruint::aliases::U256;
 use serde::{Deserialize, Serialize};
 
@@ -90,6 +91,19 @@ pub fn populate_inputs(
     input_list: &HashMap<String, Vec<U256>>,
     input_mapping: &HashMap<String, usize>,
     input_buffer: &mut Vec<U256>,
+) {
+    for (key, value) in input_list {
+        let start = input_mapping[key];
+        let end = start + value.len();
+        input_buffer[start..end].copy_from_slice(value);
+    }
+}
+
+/// Sets all provided inputs given the mapping and inputs buffer
+pub fn populate_inputs_fr(
+    input_list: &HashMap<String, Vec<Fr>>,
+    input_mapping: &HashMap<String, usize>,
+    input_buffer: &mut Vec<Fr>,
 ) {
     for (key, value) in input_list {
         let start = input_mapping[key];
